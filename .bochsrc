@@ -1,0 +1,5 @@
+ata0-master: type=disk, path="fs.bin"
+boot: disk
+megs: 128
+cpu: count=1
+log: log.txt
