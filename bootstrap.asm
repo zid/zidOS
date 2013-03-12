@@ -1,16 +1,26 @@
 global start
+extern kmain
 BITS 32
 
 section .text
 start:
 	cli
-	; Point the stack somewhere
-	mov esp, 0x100000
+	cld
+	
+	mov ecx, ebx
+	
+	; Grab the size of lomem
+	add ebx, 4
+	mov eax, dword [ebx]
+	shl eax, 10
+	mov esp, eax
 
-	; Reset eflags
-	xor edx, edx
-	push edx
-	popf
+	; Save the multiboot information
+	push 0
+	push ecx
+
+
+	xchg bx, bx
 
 	;Clear video
 	mov edi, 0xB8000
@@ -54,13 +64,14 @@ start:
 	;Enable paging
 	mov eax, cr0
 	or eax, 1 << 31
-	xchg bx, bx
 	mov cr0, eax
 
 	;Load 64bit gdt
 	lgdt [gdt]
+
 	;Jump to long mode
 	jmp 8:longmode
+[bits 64]
 longmode:
 	mov ax, 16
 	mov ds, ax
@@ -68,7 +79,14 @@ longmode:
 	mov fs, ax
 	mov gs, ax
 	mov ss, ax
-	
+
+	xchg bx, bx
+	pop rax
+
+	jmp kmain
+
+	cli
+	hlt
 	jmp $
 
 section .data
