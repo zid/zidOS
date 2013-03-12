@@ -10,4 +10,7 @@ SECTIONS
 		header.o (.text);
 		* (.text);
 	}
+	.data : {
+		* (.data);
+	}
 }

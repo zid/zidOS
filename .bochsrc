@@ -3,3 +3,5 @@ boot: disk
 megs: 128
 cpu: count=1
 log: log.txt
+clock: sync=slowdown, time0=local
+magic_break: enabled=1
