@@ -1,17 +1,9 @@
-
-static void print(unsigned short *d, const char *s)
-{
-	while(*s)
-		*d++ = *s++ | 0xF00;
-}
+#include "print.h"
+#include "cpu.h"
 
 void kmain(unsigned int r)
 {
-	unsigned short *video = (unsigned short *)0xB80A0;
-	const char msg[] = "Working in long mode.";
+	print("Working in long mode.\n");
 
-	r = 0;
-	print(video+r, msg);
-	while(1)
-	;
+	cpu_halt();
 }

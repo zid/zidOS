@@ -19,9 +19,6 @@ start:
 	push 0
 	push ecx
 
-
-	xchg bx, bx
-
 	;Clear video
 	mov edi, 0xB8000
 	xor eax, eax
@@ -80,7 +77,6 @@ longmode:
 	mov gs, ax
 	mov ss, ax
 
-	xchg bx, bx
 	pop rax
 
 	jmp kmain
