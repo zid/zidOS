@@ -4,3 +4,4 @@ megs: 128
 cpu: count=1
 clock: sync=slowdown, time0=local
 magic_break: enabled=1
+display_library: x, option="gui_debug"
