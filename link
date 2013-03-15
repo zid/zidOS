@@ -6,12 +6,21 @@ ENTRY(start)
 SECTIONS
 {
 	. = 0x100000;
-	.text : AT(0x100000) {
+	.text : AT(0x100000)
+	{
 		header.o (.text);
 		* (.text);
 	}
 	.rodata : { * (.rodata); }
-	.data : {
+	.data :
+	{
 		* (.data);
 	}
+	.bss ALIGN(0x1000):
+	{
+		BSS_START = .;
+		* (.bss);
+	}
+	BSS_LEN = SIZEOF(.bss);
+
 }

@@ -1,12 +1,18 @@
 global start
-extern kmain
+extern kmain, BSS_START, BSS_LEN
 BITS 32
 
 section .text
 start:
 	cli
 	cld
-	
+
+	; clear bss
+	xor eax, eax
+	mov ecx, BSS_LEN
+	mov edi, BSS_START
+	rep stosd
+
 	mov ecx, ebx
 	
 	; Grab the size of lomem

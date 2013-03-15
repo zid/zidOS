@@ -68,5 +68,6 @@ dw 4095
 dq IDT
 
 align 4096
+section .bss
 IDT:
-times 4096 db 0
+resb 4096
