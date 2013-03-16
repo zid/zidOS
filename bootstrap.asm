@@ -48,7 +48,6 @@ start:
 	jmp .loop
 .out:
 
-
 	;Enable PAE
 	mov eax, cr4
 	or eax, 1 << 5
@@ -61,7 +60,32 @@ start:
 	wrmsr
 
 	;Set up page tables
+
+	;Create mapping from 0 to 2GB twice
+	mov esi, PDE
+	mov edi, HIGH_PDE
+	mov eax, 0x83
+	mov ecx, 512
+	call create_pde
+
+	;First 1GB
+	mov eax, PDPTE
+	mov dword [eax], PDE + 3
+
+	;Penultimate 1GB
+	mov eax, HIGH_PDPTE
+	add eax, 4080
+	mov dword [eax], HIGH_PDE + 3
+
+	;First 512GB
 	mov eax, PML4
+	mov edi, eax
+	mov dword [edi], PDPTE + 3
+
+	;Final 512GB
+	add edi, 4088
+	mov dword [edi], HIGH_PDPTE + 3
+
 	mov cr3, eax
 
 	;Enable paging
@@ -74,6 +98,19 @@ start:
 
 	;Jump to long mode
 	jmp 8:longmode
+
+create_pde:
+	mov [esi], eax
+	mov [edi], eax
+	add esi, 8
+	add edi, 8
+	add eax, 0x200000
+	dec ecx
+	jnz create_pde
+	ret
+
+
+
 [bits 64]
 longmode:
 	mov ax, 16
@@ -83,39 +120,26 @@ longmode:
 	mov gs, ax
 	mov ss, ax
 
-	pop rax
+	; Convert RSP to the highmem stack
+	mov rbx, 0xFFFFFFFF80000000
+	mov eax, esp
+	mov ebx, eax
+	mov rax, rbx
+	mov rsp, rax
 
-	jmp kmain
+	xchg bx, bx
+	pop rdi
+
+	; Switch execution to highmem
+	mov rax, 0xFFFFFFFF80000000
+	add rax, kmain
+	jmp rax
 
 	cli
 	hlt
 	jmp $
 
 section .data
-align 4096
-
-PML4:
-dq PDPTE + 3
-PML4_END:
-times 4096-(PML4_END-PML4) db 0
-
-PDPTE:
-dq PDE + 3
-PDPTE_END:
-times 4096-(PDPTE_END-PDPTE) db 0
-
-PDE:
-dq 0x000083
-dq 0x200083
-dq 0x400083
-dq 0x600083
-dq 0x800083
-dq 0xA00083
-dq 0xC00083
-dq 0xE00083
-PDE_END:
-times 4096-(PDE_END-PDE) db 0
-
 align 8
 gdt:
 	dw 23
@@ -126,3 +150,11 @@ gdt_table:
 	dq 0xAF93000000FFFF
 str1 db "Hello, World!",0
 
+section .bss
+align 4096
+
+     PML4  resb 4096
+     PDPTE resb 4096
+HIGH_PDPTE resb 4096
+     PDE   resb 4096
+HIGH_PDE   resb 4096
