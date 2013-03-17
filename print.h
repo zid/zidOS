@@ -4,6 +4,6 @@ typedef enum  {
 	GREEN
 } colour;
 
-void print(const char *);
+void print(const char *, ...);
 void clear_screen(colour c);
 #endif
