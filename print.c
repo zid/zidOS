@@ -86,7 +86,7 @@ static void put_long_hex(unsigned long n)
 	}
 }
 
-void vprint(const char *fmt, va_list ap)
+static void vprint(const char *fmt, va_list ap)
 {
 	const char *p;
 	unsigned char c;
