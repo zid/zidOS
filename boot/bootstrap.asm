@@ -129,9 +129,10 @@ longmode:
 align 16
 gdt:
 	dw 23
-	dd gdt + 10
+	dd gdt + 16
 	dd 0
 
+align 16
 gdt_table:
 	dq 0
 	dq 0xAF9B000000FFFF
