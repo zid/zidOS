@@ -1,10 +1,11 @@
+[bits 64]
 global interrupts_init
 global interrupts_enable
 extern default_interrupt_handler
 
 
 interrupts_init:
-	mov rax, int_handlers
+	mov rax, qword int_handlers
 	xor rcx, rcx
 
 .loop:
@@ -13,7 +14,8 @@ interrupts_init:
 	inc cl
 	jnz .loop
 
-	lidt [IDT_info]
+	mov rcx, qword IDT_info
+	lidt [rcx]
 	ret
 
 interrupts_enable:
@@ -25,7 +27,7 @@ install_interrupt:
 	push rax
 	push rcx
 
-	mov rdi, IDT
+	mov rdi, qword IDT
 	shl rcx, 4
 	add rdi, rcx
 	

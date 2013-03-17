@@ -1,6 +1,7 @@
-BITS 32
-
-header:
-.magic dd 0x1BADB002
-.flags dd 3
-.checksum dd 0 - (0x1BADB002 + 3)
+extern BSS_OFFSET, BSS_LEN, kmain
+section .text
+jmp kmain
+align 8
+dd BSS_OFFSET
+dd BSS_LEN
+dq kmain

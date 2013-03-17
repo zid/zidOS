@@ -1,24 +1,27 @@
-OUTPUT_FORMAT("elf32-i386")
-OUTPUT_ARCH("i386:x86-64")
+OUTPUT_FORMAT("binary")
 
-ENTRY(start)
+ENTRY(kmain)
+
+VIRT = 0xFFFFFFFF80102000;
 
 SECTIONS
 {
-	. = 0x100000;
-	.text : AT(0x100000)
+	. = VIRT;
+	.text :
 	{
 		header.o (.text);
 		* (.text);
 	}
+
 	.rodata : { * (.rodata); }
-	.data :
+	.data ALIGN(0x1000):
 	{
 		* (.data);
 	}
 	.bss ALIGN(0x1000):
 	{
-		BSS_START = .;
+		BSS_OFFSET = . - VIRT;
+		. += (4096 * 5);
 		* (.bss);
 	}
 	BSS_LEN = SIZEOF(.bss);

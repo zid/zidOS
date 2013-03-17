@@ -1,12 +1,16 @@
-CFLAGS = -W -Wall -nostartfiles -nodefaultlibs -nostdlib -fno-builtin -ffreestanding -O3 -g -mno-mmx -mno-sse -mno-sse2 -mno-sse3
+CFLAGS = -W -Wall -nostartfiles -nodefaultlibs -nostdlib -fno-builtin -ffreestanding -O3 -g -mno-mmx -mno-sse -mno-sse2 -mno-sse3 -mcmodel=kernel
 SRC = $(wildcard *.c)
 OBJ = $(SRC:.c=.o)
 ASMSRC = $(wildcard *.asm)
 ASMOBJ = $(ASMSRC:.asm=.o)
 
-install: os.bin
-	cp os.bin fs/boot/
+install: kernel.bin boot.bin
+	cp boot/boot.bin fs/boot/
+	cp kernel.bin fs/boot/
 	sync
+
+boot.bin:
+	$(MAKE) -C boot/
 
 prep:
 	mkdir -p fs
@@ -14,8 +18,8 @@ prep:
 	losetup /dev/loop2 -o 32256 /dev/loop1
 	mount /dev/loop2 fs
 
-os.bin: $(OBJ) $(ASMOBJ)
-	ld -Tlink $(OBJ) $(ASMOBJ) -o os.bin -z max-page-size=4096
+kernel.bin: $(OBJ) $(ASMOBJ)
+	ld -Tlink $(OBJ) $(ASMOBJ) -o kernel.bin -z max-page-size=4096 
 
 %.o : %.asm
 	yasm -felf64 $^ -o $@
@@ -27,4 +31,5 @@ run:
 	bochs
 
 clean:
-	@rm *.o os.bin
+	$(MAKE) -C boot clean
+	@rm *.o kernel.bin
