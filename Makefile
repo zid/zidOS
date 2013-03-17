@@ -1,4 +1,4 @@
-CFLAGS = -W -Wall -nostartfiles -nodefaultlibs -nostdlib -fno-builtin -ffreestanding -O3 -g -mno-mmx -mno-sse -mno-sse2 -mno-sse3 -mcmodel=kernel
+CFLAGS = -W -Wall -nostartfiles -nodefaultlibs -nostdlib -ffreestanding -O3 -g -mno-mmx -mno-sse -mno-sse2 -mno-sse3 -mcmodel=kernel -mno-red-zone -Iinclude/
 SRC = $(wildcard *.c)
 OBJ = $(SRC:.c=.o)
 ASMSRC = $(wildcard *.asm)
