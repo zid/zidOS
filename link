@@ -23,6 +23,7 @@ SECTIONS
 		BSS_OFFSET = . - VIRT;
 		. += (4096 * 5);
 		* (.bss);
+		. = ALIGN(4096);
 	}
 	BSS_LEN = SIZEOF(.bss);
 

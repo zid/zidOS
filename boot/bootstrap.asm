@@ -19,10 +19,15 @@ create_pde:
 start:
 	cli
 
+
 	;Load stack pointer to top of lomem
 	mov eax, [ebx+4]
 	shl eax, 10
 	mov esp, eax
+
+	push 0
+	push ebx
+
 
 	mov edi, [ebx+24] ;Module table
 	mov eax, [edi]    ;First module start
@@ -120,8 +125,11 @@ longmode:
 	or rax, rbx
 	mov rsp, rax
 
-	pop rdx		 ;Restore module start address
-	mov rax, [rdx+16];kmain symbol in module
+	pop rdx		 ;header.o
+	mov rax, [rdx+16];kmain symbol
+
+	pop rdi		 ;e820
+	or rdi, rbx
 	jmp rax
 
 	jmp $

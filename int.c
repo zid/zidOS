@@ -7,4 +7,6 @@ void default_interrupt_handler(int n)
 	msg[1] = ((n & 0x0F)>>0)["0123456789ABCDEF"];
 
 	print(msg);
+	if(n == 0x0D)
+	cpu_halt();
 }
