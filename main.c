@@ -1,15 +1,16 @@
 #include "print.h"
 #include "cpu.h"
 #include "apic.h"
+#include "mem.h"
 
-void kmain(unsigned int r)
+void kmain(unsigned int *e820)
 {
-	(void)r;
+	int i;
 	print("Working in long mode.\n");
 	interrupts_init();
 	interrupts_enable();
 
-	apic();
+	mem_init(e820);
 
 	cpu_halt();
 }
